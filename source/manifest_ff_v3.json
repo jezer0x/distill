@@ -10,11 +10,11 @@
 		}
 	},
 	"background": {
-		"scripts": ["background.js"]
+		"scripts": ["background.a054f291.js"]
 	},
 	"action": {
-		"default_icon": "scroll_1f4dc.png",
-		"default_popup": "popup.html"
+		"default_icon": "scroll_1f4dc.35f71830.png",
+		"default_popup": "popup.3e8905c2.html"
 	},
 	"permissions": ["activeTab", "contextMenus", "scripting"]
 }
