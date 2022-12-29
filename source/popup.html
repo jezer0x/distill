@@ -8,13 +8,18 @@
   <body>
     <div id="buttons">
       <!-- Add HTML elements for the popup here -->
-      <button id="summarize-button" style="font-size : 30px;" title="Summary">&#x1F4DD</button>
-      <button id="highlights-button" style="font-size : 30px;" title="Key Highlights">&#x1F4CC</button>
-      <button id="assumptions-button" style="font-size : 30px;" title="Underlying Assumptions">&#x1F914</button>
-      <button id="factcheck-button" style="font-size : 30px;" title="Fact Check">&#x1F575</button>
-      <button id="devil-button" style="font-size : 30px;" title="Devil's Advocate">&#x1F608</button>
-      <button id="bias-button" style="font-size : 30px;" title="Detect Logical Fallcies and Cognitive Biases">&#x1F171</button>
-      <button id="eli5-button" style="font-size : 30px;" title="ELI5">&#x1F9D2</button>
+      <button id="summarize-button" style="font-size : 20px;" title="Summary">&#x1F4DD TL;DR</button>
+      <button id="highlights-button" style="font-size : 20px;" title="Key Highlights">&#x1F4CC Highlights</button>
+      <button id="assumptions-button" style="font-size : 20px;" title="Underlying Assumptions">&#x1F914 Underlying Assumptions</button>
+      <button id="factcheck-button" style="font-size : 20px;" title="Fact Check">&#x1F575 Fact Check</button>
+      <button id="devil-button" style="font-size : 20px;" title="Devil's Advocate">&#x1F608 Devil's Advocate</button>
+      <button id="bias-button" style="font-size : 20px;" title="Detect Logical Fallcies and Cognitive Biases">&#x1F171 Fallacies</button>
+      <button id="eli5-button" style="font-size : 20px;" title="ELI5">&#x1F9D2 ELI5</button>
+      <button id="key-button" style="font-size : 20px;" title="Key">&#x1F511</button>
+    </div>
+    <div id="key" style="display:none">
+      <input type="text" id="key-input" placeholder="Enter your API key here">
+      <button id="key-submit" style="font-size : 20px;" title="Key">&#x1F511</button>
     </div>
     <div id="result" style = "min-width: 600px"></div>
     <script src="popup.js"></script>

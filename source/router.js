@@ -2,13 +2,6 @@ var tokenizer = require("sbd");
 const crypto = require("crypto");
 import { get, set } from "idb-keyval";
 import { OpenAIClient } from "openai-fetch";
-const openai = new OpenAIClient({
-	apiKey: "ENTER YOUR OWN KEY", //process.env["OPENAI_API_KEY"],
-});
-
-// create an indexedDB database
-const dbName = "distill";
-const storeName = "cache";
 
 // create a database class
 class Database {
@@ -86,7 +79,11 @@ function getTextChunks(sentences, maxTokensPerChunk) {
 	return res;
 }
 
-async function getAnswer(text, prompt) {
+export async function setApiKey(key) {
+	await db.set("openai-api-key", key);
+}
+
+async function getAnswer(openai, text, prompt) {
 	let response = await openai.createCompletion({
 		model: "text-davinci-003",
 		prompt: prompt.concat("\n" + text),
@@ -102,6 +99,16 @@ async function getAnswer(text, prompt) {
 }
 
 export async function castSpell(text, prompt) {
+	const apiKey = await db.get("openai-api-key");
+
+	if (apiKey == undefined || apiKey == "") {
+		return "Please set OpenAI API key first!";
+	}
+
+	const openai = new OpenAIClient({
+		apiKey: apiKey, //process.env["OPENAI_API_KEY"],
+	});
+
 	if (text == undefined) {
 		return "text not found!";
 	}
@@ -131,9 +138,9 @@ export async function castSpell(text, prompt) {
 		try {
 			for (var chunk of chunks) {
 				if (key.recursive) {
-					answer = await getAnswer(answer + chunk, key.spell);
+					answer = await getAnswer(openai, answer + chunk, key.spell);
 				} else {
-					answer += await getAnswer(chunk, key.spell);
+					answer += await getAnswer(openai, chunk, key.spell);
 				}
 			}
 		} catch (e) {

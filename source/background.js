@@ -1,6 +1,6 @@
 var { Readability } = require("@mozilla/readability");
 import { DOMParser } from "linkedom"; // since DOMParser is not available in the background script for chrome
-import { castSpell } from "./router.js";
+import { castSpell, setApiKey } from "./router.js";
 
 async function distill(spell) {
 	// Get the active tab
@@ -82,5 +82,11 @@ async function distill(spell) {
 chrome.runtime.onMessage.addListener((message) => {
 	if (message.type === "request") {
 		distill(message.spell);
+	}
+});
+
+chrome.runtime.onMessage.addListener((message) => {
+	if (message.type === "key") {
+		setApiKey(message.key);
 	}
 });

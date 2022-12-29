@@ -9,7 +9,7 @@
 		"default_icon": "scroll_1f4dc.png",
 		"default_popup": "popup.html"
 	},
-	"permissions": ["activeTab", "contextMenus", "scripting"],
+	"permissions": ["activeTab", "contextMenus", "scripting", "storage"],
 	"background": {
 		"service_worker": "background.js",
 		"type": "module"
