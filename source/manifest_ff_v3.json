@@ -1,17 +1,20 @@
 {
+	"manifest_version": 3,
 	"name": "Distill",
 	"version": "0.0.1",
 	"description": "Distill web pages in seconds",
 	"homepage_url": "https://github.com/jezer0x/distill",
-	"manifest_version": 3,
-	"minimum_chrome_version": "100",
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "tldrBot@example.com"
+		}
+	},
+	"background": {
+		"scripts": ["background.js"]
+	},
 	"action": {
 		"default_icon": "scroll_1f4dc.png",
 		"default_popup": "popup.html"
 	},
-	"permissions": ["activeTab", "contextMenus", "scripting"],
-	"background": {
-		"service_worker": "background.js",
-		"type": "module"
-	}
+	"permissions": ["activeTab", "contextMenus", "scripting"]
 }
