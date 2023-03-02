@@ -1,7 +1,6 @@
 var tokenizer = require("sbd");
 const crypto = require("crypto");
 import { get, set } from "idb-keyval";
-import { OpenAIClient } from "openai-fetch";
 
 // create a database class
 class Database {
@@ -83,19 +82,32 @@ export async function setApiKey(key) {
 	await db.set("openai-api-key", key);
 }
 
-async function getAnswer(openai, text, prompt) {
-	let response = await openai.createCompletion({
-		model: "text-davinci-003",
-		prompt: prompt.concat("\n" + text),
-		temperature: 0.7,
-		max_tokens: 512,
-		top_p: 1.0,
-		frequency_penalty: 0.0,
-		presence_penalty: 0.0,
+async function getAnswer(apiKey, text, prompt) {
+	let response = await fetch("https://api.openai.com/v1/chat/completions", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: "Bearer " + apiKey,
+		},
+		body: JSON.stringify({
+			model: "gpt-3.5-turbo",
+			messages: [
+				{
+					role: "system",
+					content: "You are the world's most helpful reading assistant.",
+				},
+				{ role: "user", content: prompt.concat("\n", text) },
+			],
+			temperature: 0.7,
+			max_tokens: 512,
+		}),
 	});
 
 	console.log(response);
-	return response.response.choices[0].text;
+	return response.json().then((data) => {
+		console.log(data);
+		return data.choices[0].message.content;
+	});
 }
 
 export async function castSpell(text, prompt) {
@@ -104,10 +116,6 @@ export async function castSpell(text, prompt) {
 	if (apiKey == undefined || apiKey == "") {
 		return "Please set OpenAI API key first!";
 	}
-
-	const openai = new OpenAIClient({
-		apiKey: apiKey, //process.env["OPENAI_API_KEY"],
-	});
 
 	if (text == undefined) {
 		return "text not found!";
@@ -138,9 +146,9 @@ export async function castSpell(text, prompt) {
 		try {
 			for (var chunk of chunks) {
 				if (key.recursive) {
-					answer = await getAnswer(openai, answer + chunk, key.spell);
+					answer = await getAnswer(apiKey, answer + chunk, key.spell);
 				} else {
-					answer += await getAnswer(openai, chunk, key.spell);
+					answer += await getAnswer(apiKey, chunk, key.spell);
 				}
 			}
 		} catch (e) {
@@ -148,6 +156,7 @@ export async function castSpell(text, prompt) {
 			return "Something went wrong!";
 		}
 
+		// TODO: handle outOfSpace error. Use a Fifo Cache?
 		await db.set(dbKey, answer);
 		return answer;
 	}
