@@ -2,7 +2,7 @@ var { Readability } = require("@mozilla/readability");
 import { DOMParser } from "linkedom"; // since DOMParser is not available in the background script for chrome
 import { castSpell, setApiKey } from "./router.js";
 
-async function distill(spell) {
+async function distill(spell, metadata) {
 	// Get the active tab
 	const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
 	const tab = tabs[0];
@@ -61,7 +61,7 @@ async function distill(spell) {
 	}
 
 	// Send the encoded Text castSpell in router.js
-	const response = await castSpell(text, spell);
+	const response = await castSpell(text, spell, metadata);
 
 	try {
 		console.log(response);
@@ -81,7 +81,7 @@ async function distill(spell) {
 
 chrome.runtime.onMessage.addListener((message) => {
 	if (message.type === "request") {
-		distill(message.spell);
+		distill(message.spell, message.metadata);
 	}
 });
 

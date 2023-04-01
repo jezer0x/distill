@@ -50,6 +50,10 @@ const prompts = {
 		spell: "Explain the following text like I'm a second grader:",
 		recursive: true,
 	},
+	ask: {
+		spell: "I will give you a question and a text. Answer the question.",
+		recursive: false,
+	},
 };
 
 function getApproxTokenCount(str) {
@@ -90,7 +94,7 @@ async function getAnswer(apiKey, text, prompt) {
 			Authorization: "Bearer " + apiKey,
 		},
 		body: JSON.stringify({
-			model: "gpt-3.5-turbo",
+			model: "gpt-4",
 			messages: [
 				{
 					role: "system",
@@ -110,7 +114,7 @@ async function getAnswer(apiKey, text, prompt) {
 	});
 }
 
-export async function castSpell(text, prompt) {
+export async function castSpell(text, prompt, metadata) {
 	const apiKey = await db.get("openai-api-key");
 
 	if (apiKey == undefined || apiKey == "") {
@@ -132,23 +136,30 @@ export async function castSpell(text, prompt) {
 	console.log(text, prompt);
 
 	const key = prompts[prompt];
-	const dbKey = hash + "-" + key.spell + "-" + key.recursive;
+	var compiledSpell;
+	if (metadata != undefined) {
+		compiledSpell = key.spell + "\n" + metadata;
+	} else {
+		compiledSpell = key.spell;
+	}
+
+	const dbKey = hash + "-" + compiledSpell + "-" + key.recursive;
 	const val = await db.get(dbKey);
 
 	if (val) {
 		return val;
 	} else {
 		var sentences = tokenizer.sentences(text, {});
-		var chunks = getTextChunks(sentences, 3000);
+		var chunks = getTextChunks(sentences, 6000);
 
 		var answer = "";
 
 		try {
 			for (var chunk of chunks) {
 				if (key.recursive) {
-					answer = await getAnswer(apiKey, answer + chunk, key.spell);
+					answer = await getAnswer(apiKey, answer + chunk, compiledSpell);
 				} else {
-					answer += await getAnswer(apiKey, chunk, key.spell);
+					answer += await getAnswer(apiKey, chunk, compiledSpell);
 				}
 			}
 		} catch (e) {

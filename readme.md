@@ -6,13 +6,12 @@
 
 ## Quickstart
 
-1. Fill up your api key in router.js
-2. npm run build
-3. web-ext run -t chromium
+1. npm run build
+2. web-ext run -t chromium
 
 ## I want to run on firefox
 
-1. Skip step 3 above.
+1. Skip step 2 above.
 2. Copy over "manifest_ff_v3.json" to "dsitribution/manifest.json". You might have to modify the file names to their temp counterparts.
 3. If FF hasn't shipped v3 yet, enable it by reading https://extensionworkshop.com/documentation/develop/manifest-v3-migration-guide/
 4. Load the extension in firefox from `about:debugging`.
